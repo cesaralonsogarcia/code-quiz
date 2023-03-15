@@ -4,9 +4,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>JavaScript Code Quiz</title>
+    <link rel="stylesheet" type="text/css" href="./assets/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="./assets/css/style.css">
 </head>
 <body>
-    
+    <!--Header includes the link to high scores and timer-->
+    <header>
+        <button id="highScores">View high scores</button>
+        <div class="timer" id="timerContainer">
+            <div id="timerLabel">Time: </div>
+            <div id="timerTime">0</div>
+        </div> 
+    </header>
+
+    <!--Main content for start page and questions-->
+    <main>
+        <div id="container">
+            <div id="questionContainer">
+                <h1>Coding Quiz Challenge</h1>
+            </div>
+            <div id="optionContainer">
+                <p id="gameDescription">
+                    Try to answer the following code related questions within
+                    the time limit.<br> Keep in mind that 10 seconds will be deducted for
+                    incorrect answers.
+                </p>
+            </div>
+            <button id="startButton">Start</button>
+        </div>
+    </main>
 </body>
 </html>

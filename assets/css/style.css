@@ -1,0 +1,92 @@
+/* Universal selector */
+* {
+    font-family: Helvetica, sans-serif;
+}
+
+/* Element selectors */
+header {
+    padding: 25px;
+    display: inline-block;
+    width: 100%;
+}
+
+/* Class selectors */
+.timer {
+    float: right;
+    width: 50%;
+    display: flex;
+}
+
+/* ID selectors */
+#highScores {
+    outline: none;
+    background: transparent;
+    border: none;
+    color: #115baf;
+    width: 50%;
+    text-align: left;
+}
+#timerLabel {
+    flex-flow: row wrap;
+    width: 90%;
+    text-align: right;
+}
+
+#timerTime {
+    flex-flow: row wrap;
+    width: 10%;
+    text-align: center;
+}
+
+#container {
+    padding: 10% 20%;
+    text-align: center;
+}
+
+#questionContainer {
+    text-align: center;
+    font-size: 40px;
+}
+
+#optionContainer {
+    width: 100%;
+}
+
+#gameDescription {
+    padding: 20px 0;
+    font-size: 20px;
+    line-height: 2;
+}
+
+#startButton {
+    text-align: center;
+    padding: 10px;
+    font-size: 25px;
+    font-weight: bold;
+    border-radius: 20px;
+    width: 200px;
+    background: #115baf;
+    color: white;
+}
+
+/* Responsive design for smaller screens */
+@media screen and (max-width: 425px) {
+    header {
+        font-size: 14px;
+    }
+
+    #questionContainer {
+        font-size: 30px;
+    }
+
+    #gameDescription {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    #startButton {
+        font-size: 20px;
+        width: 150px;
+    }
+    
+}
