@@ -8,24 +8,15 @@ var optionContainer = document.querySelector('#optionContainer');
 var gameDescription = document.querySelector('#gameDescription');
 var answerList = document.querySelector('#answerList');
 var startButton = document.querySelector('#startButton');
+var result = document.querySelector('#result');
 
 var isGameOver = false;
 var timer;
 var timerCount;
 var highScoresArray = [];
-var isA;
-var isB;
-var isC;
-var isD;
-
-// Object with questions and answers
-var questionOne = {
-    question: 'What is question 1?',
-    a: 'This is wrong',
-    b: 'Also wrong',
-    c: 'WRONG',
-    correct: 'CORRECT ANSWER'
-};
+var questionIndex = 0;
+var answerClick;
+var finalAnswer;
 
 // Array with quiz questions
 var questionsArray = [
@@ -89,7 +80,7 @@ function init() {
 // The startGame function is called when the start button is clicked
 function startGame() {
     isGameOver = false;
-    timerCount = 15;
+    timerCount = 50;
     startButton.className = 'hidden';
     quizTitle.className = 'hidden';
     gameDescription.className = 'hidden';
@@ -101,56 +92,56 @@ function startGame() {
 
 // The renderQuestion function displays the question on the screen
 function renderQuestion(array) {
-    questionContainer.style.textAlign = 'left';
-    optionContainer.style.textAlign = 'left';
-    answerList.style.padding = '10px 0';
-    answerList.style.lineHeight = '2';
-    for (var i = 0; i < array.length; i++){
-    question.textContent = array[0].question;
-    // var optionA = '<li>' + array[0].options.a + '</li>';
-    // var optionB = '<li>' + array[0].options.b + '</li>';
-    // var optionC = '<li>' + array[0].options.c + '</li>';
-    // var optionD = '<li>' + array[0].options.d + '</li>';
-    // answerList.innerHTML = optionA + optionB + optionC + optionD;
-    answerList.innerHTML = '<li>' + array[0].options.a + '</li><li>' +
-        array[0].options.b + '</li><li>' +
-        array[0].options.c + '</li><li>' +
-        array[0].options.d + '</li>';
-    
-    var answerClick = document.querySelectorAll('li');
-    answerClick[0].addEventListener('click', changeBackground);
-    answerClick[1].addEventListener('click', changeBackground);
-    answerClick[2].addEventListener('click', changeBackground);
-    answerClick[3].addEventListener('click', changeBackground);
-    /*
-    for (var i = 0; i < answerClick.length; i++){
-    answerClick[i].addEventListener('click', changeBackground);
-    if (i === 0) {
-        var isA = true;
-    } else if (i === 1) {
-        var isB = true;
-    } else if (i === 2) {
-        var isC = true;
-    } else {
-        var isD = true;
-    }*/
-    
-    //}
+    question.classList.add('alignLeft');
+    answerList.classList.add('answerList');
+    if (questionIndex < array.length){
+        question.textContent = array[questionIndex].question;
+        answerList.innerHTML = '<li>' + array[questionIndex].options.a + '</li><li>' +
+        array[questionIndex].options.b + '</li><li>' +
+        array[questionIndex].options.c + '</li><li>' +
+        array[questionIndex].options.d + '</li>';
+        answerClick = document.querySelectorAll('li');
+        for (var i = 0; i < answerClick.length; i++) {
+        answerClick[i].addEventListener('click', changeBackground);
+        }
+    }
 
 }
 
+// The changeBackground function highlights the chosen option
 function changeBackground(event) {
     var clicked = event.currentTarget;
-    clicked.setAttribute(
-        'style',
-        'background-color: aquamarine; color: black; font-weight: bold'
-    );
     clicked.classList.add("clicked");
-    console.log(answerList);
+    checkAnswer(answerClick);
+    return;
 }
 
-function checkAnswer() {
-    answerClick.addEventListener('click', function(){})
+// The checkAnswer functino checks if the correct answer was clicked
+function checkAnswer(array) {
+    for (var i = 0; i < array.length; i++) {
+        var clickedClass = array[i].getAttribute("class");
+        if (clickedClass) {
+            if (i === 0) {
+                finalAnswer = 'a';
+            } else if (i === 1) {
+                finalAnswer = 'b';
+            } else if (i === 2) {
+                finalAnswer = 'c';
+            } else if (i === 3) {
+                finalAnswer = 'd';
+            }
+        }
+    }
+    if (finalAnswer === questionsArray[questionIndex].answer) {
+        result.textContent = "CORRECT!";
+        questionIndex++;
+        renderQuestion(questionsArray);
+    } else {
+        timerCount -= 10;
+        result.textContent = "WRONG!";
+        questionIndex++;
+        renderQuestion(questionsArray);
+    }  
 }
 
 // The startTimer function starts the timer for the game

@@ -39,6 +39,17 @@ li {
     font-weight: bold;
 }
 
+.alignLeft {
+    text-align: left;
+    padding: 0 20px;
+}
+
+.answerList {
+    text-align: left;
+    padding: 10px 10px;
+    line-height: 2;
+}
+
 /* ID selectors */
 #highScores {
     outline: none;
@@ -89,6 +100,12 @@ li {
     width: 200px;
     background: #115baf;
     color: white;
+}
+
+#result {
+    font-size: 30px;
+    font-weight: bold;
+    color: darkorange;
 }
 
 /* Responsive design for smaller screens */
