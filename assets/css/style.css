@@ -10,11 +10,33 @@ header {
     width: 100%;
 }
 
+li {
+    background-color: #115baf;
+    color: #fff;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+}
+
 /* Class selectors */
 .timer {
     float: right;
     width: 50%;
     display: flex;
+}
+
+.hidden {
+    visibility: hidden;
+    height: 0;
+    padding: 0;
+    font-size: 0;
+    line-height: 0;
+}
+
+.clicked {
+    background-color: aquamarine;
+    color: black;
+    font-weight: bold;
 }
 
 /* ID selectors */

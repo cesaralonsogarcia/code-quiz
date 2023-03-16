@@ -22,16 +22,17 @@
     <main>
         <div id="container">
             <div id="questionContainer">
-                <h1>Coding Quiz Challenge</h1>
+                <h1 id="quizTitle">Coding Quiz Challenge</h1>
+                <p id="question"></p>
             </div>
             <div id="optionContainer">
+                <!--List to display the possible answers-->
+                <ol id="answerList"></ol>
                 <p id="gameDescription">
                     Try to answer the following code related questions within
                     the time limit.<br> Keep in mind that 10 seconds will be deducted for
                     incorrect answers.
                 </p>
-                <!--List to display the possible answers-->
-                <ol id="answerList"></ol>
             </div>
             <button id="startButton">Start</button>
         </div>
