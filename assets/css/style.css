@@ -10,7 +10,8 @@ header {
     width: 100%;
 }
 
-li {
+/* Class selectors */
+.displayOptions {
     background-color: #115baf;
     color: #fff;
     padding: 10px;
@@ -18,7 +19,6 @@ li {
     border-radius: 10px;
 }
 
-/* Class selectors */
 .timer {
     float: right;
     width: 50%;

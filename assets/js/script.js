@@ -9,6 +9,10 @@ var gameDescription = document.querySelector('#gameDescription');
 var answerList = document.querySelector('#answerList');
 var startButton = document.querySelector('#startButton');
 var result = document.querySelector('#result');
+var optionA = document.querySelector('#optionA');
+var optionB = document.querySelector('#optionB');
+var optionC = document.querySelector('#optionC');
+var optionD = document.querySelector('#optionD');
 
 var isGameOver = false;
 var timer;
@@ -17,56 +21,57 @@ var highScoresArray = [];
 var questionIndex = 0;
 var answerClick;
 var finalAnswer;
+var clickedClass;
 
 // Array with quiz questions
 var questionsArray = [
     {
-        question: 'What is question 1?',
+        question: 'When was JavaScript created?',
         options: {
-            a: 'option 1',
-            b: 'option 2',
-            c: 'option 3',
-            d: 'option 4'
+            a: '1935',
+            b: '2010',
+            c: '1995',
+            d: '1989'
         },
         answer: 'c'
     },
     {
-        question: 'What is question 2?',
+        question: 'What element tag is used in HTML to link JavaScript?',
         options: {
-            a: 'option 1',
-            b: 'option 2',
-            c: 'option 3',
-            d: 'option 4'
+            a: '<label>',
+            b: '<script>',
+            c: '<js>',
+            d: '<h3>'
         },
         answer: 'b'
     },
     {
-        question: 'What is question 3?',
+        question: 'How do you display an alert with JavaScript?',
         options: {
-            a: 'option 1',
-            b: 'option 2',
-            c: 'option 3',
-            d: 'option 4'
+            a: 'alert(\'Message\');',
+            b: '<alert>',
+            c: 'function alert ()',
+            d: 'displayMessage.alert'
         },
         answer: 'a'
     },
     {
-        question: 'What is question 4?',
+        question: 'What is the proper syntax for a function in JavaScript?',
         options: {
-            a: 'option 1',
-            b: 'option 2',
-            c: 'option 3',
-            d: 'option 4'
+            a: 'console.log(functionName);',
+            b: '{functionName}',
+            c: 'create functionName{}',
+            d: 'function functionName() {}'
         },
         answer: 'd'
     },
     {
-        question: 'What is question 5?',
+        question: 'What is the conditional statement in a for loop: for(var i = 0; i < limit; i++)',
         options: {
-            a: 'option 1',
-            b: 'option 2',
-            c: 'option 3',
-            d: 'option 4'
+            a: 'for',
+            b: 'var i = 0',
+            c: 'i < limit',
+            d: 'i++'
         },
         answer: 'c'
     }
@@ -74,6 +79,7 @@ var questionsArray = [
 
 // The init function will load the high scores when the page loads
 function init() {
+    answerList.classList.add('hidden');
     getHighScores();
 }
 
@@ -85,63 +91,102 @@ function startGame() {
     quizTitle.className = 'hidden';
     gameDescription.className = 'hidden';
     startTimer();
-    for (var i = 0; i < questionsArray.length; i++){
+    //for (var i = 0; i < questionsArray.length; i++){
+    //if(questionIndex < questionsArray.length){
         renderQuestion(questionsArray);
-    }
+        //checkAnswer();
+        clearClicked();
+        //checkAnswer();
+        //registerClick(answerClick);
+        //saveAnswer(answerClick);
+        //checkAnswer(answerClick);
+    //}
 }
 
 // The renderQuestion function displays the question on the screen
 function renderQuestion(array) {
+    if(questionIndex >= questionsArray.length){
+        isGameOver = true;
+    }
     question.classList.add('alignLeft');
     answerList.classList.add('answerList');
-    if (questionIndex < array.length){
-        question.textContent = array[questionIndex].question;
-        answerList.innerHTML = '<li>' + array[questionIndex].options.a + '</li><li>' +
-        array[questionIndex].options.b + '</li><li>' +
-        array[questionIndex].options.c + '</li><li>' +
-        array[questionIndex].options.d + '</li>';
-        answerClick = document.querySelectorAll('li');
-        for (var i = 0; i < answerClick.length; i++) {
-        answerClick[i].addEventListener('click', changeBackground);
-        }
-    }
-
+    answerList.classList.remove('hidden');
+    clearClicked();
+    optionA.classList.add('displayOptions');
+    optionB.classList.add('displayOptions');
+    optionC.classList.add('displayOptions');
+    optionD.classList.add('displayOptions');
+    question.textContent = array[questionIndex].question;
+    optionA.textContent = array[questionIndex].options.a;
+    optionB.textContent = array[questionIndex].options.b;
+    optionC.textContent = array[questionIndex].options.c;
+    optionD.textContent = array[questionIndex].options.d;
 }
 
-// The changeBackground function highlights the chosen option
-function changeBackground(event) {
-    var clicked = event.currentTarget;
-    clicked.classList.add("clicked");
-    checkAnswer(answerClick);
-    return;
+function showScore() {
+    result.innerHTML = '';
+    question.innerHTML = 'Your score is ' + timerCount;
+    optionContainer.innerHTML = '<br><br><label>Name:</label><input><button>Save<button>';
 }
 
-// The checkAnswer functino checks if the correct answer was clicked
-function checkAnswer(array) {
-    for (var i = 0; i < array.length; i++) {
-        var clickedClass = array[i].getAttribute("class");
-        if (clickedClass) {
-            if (i === 0) {
-                finalAnswer = 'a';
-            } else if (i === 1) {
-                finalAnswer = 'b';
-            } else if (i === 2) {
-                finalAnswer = 'c';
-            } else if (i === 3) {
-                finalAnswer = 'd';
-            }
-        }
-    }
-    if (finalAnswer === questionsArray[questionIndex].answer) {
-        result.textContent = "CORRECT!";
+function checkAnswer() {
+    if (answerClick === questionsArray[questionIndex].answer) {
+        result.textContent = 'CORRECT!!!';
         questionIndex++;
+        //setTimeout(clearClicked(), 2000);
         renderQuestion(questionsArray);
     } else {
         timerCount -= 10;
-        result.textContent = "WRONG!";
+        result.textContent = 'WRONG...';
         questionIndex++;
+        //setTimeout(clearClicked(), 2000);
         renderQuestion(questionsArray);
-    }  
+    }
+}
+
+function clearClicked() {
+    if(answerClick === 'a'){
+        optionA.classList.remove('clicked');
+    } else if(answerClick === 'b'){
+        optionB.classList.remove('clicked');
+    } else if(answerClick === 'c'){
+        optionC.classList.remove('clicked');
+    } else if(answerClick === 'd'){
+        optionD.classList.remove('clicked');
+    }
+    console.log(optionA);
+    console.log(optionB);
+    console.log(optionC);
+    console.log(optionD);
+}
+
+// The changeBackground function highlights the chosen option
+function changeBackgroundA(event) {
+    event.preventDefault();
+    optionA.classList.add('clicked');
+    answerClick = 'a';
+    checkAnswer();
+}
+
+function changeBackgroundB(event) {
+    event.preventDefault();
+    optionB.classList.add('clicked');
+    answerClick = 'b';
+    checkAnswer();
+}
+
+function changeBackgroundC(event) {
+    event.preventDefault();
+    optionC.classList.add('clicked');
+    answerClick = 'c';
+    checkAnswer();
+}
+
+function changeBackgroundD(event) {
+    event.preventDefault();
+    optionD.classList.add('clicked');
+    answerClick = 'd';
+    checkAnswer();
 }
 
 // The startTimer function starts the timer for the game
@@ -151,12 +196,15 @@ function startTimer() {
         timerTime.textContent = timerCount;
         if (timerCount > 0) {
             if (isGameOver) {
-                //displayScore();
+                showScore();
+                clearInterval(timer);
             }
-        } else {
-            isGameOver = true;
+        }
+
+        if (timerCount <= 0) {
             clearInterval(timer);
-            //displayScore();
+            timerCount = 0;
+            showScore();
         }
     }, 1000);
 }
@@ -181,4 +229,10 @@ function getHighScores() {
 init();
 
 // Event listener to start the game
-startButton.addEventListener("click", startGame);
+startButton.addEventListener('click', startGame);
+
+// Event listeners for multiple choice
+optionA.addEventListener('click', changeBackgroundA);
+optionB.addEventListener('click', changeBackgroundB);
+optionC.addEventListener('click', changeBackgroundC);
+optionD.addEventListener('click', changeBackgroundD);
