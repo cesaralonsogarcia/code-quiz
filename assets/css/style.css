@@ -50,6 +50,10 @@ header {
     line-height: 2;
 }
 
+.highScores {
+    text-align: center;
+}
+
 /* ID selectors */
 #highScores {
     outline: none;

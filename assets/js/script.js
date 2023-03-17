@@ -1,4 +1,5 @@
 // Variables to access the HTML elements
+var highScores = document.querySelector('#highScores');
 var timerTime = document.querySelector('#timerTime');
 var container = document.querySelector('#container');
 var questionContainer = document.querySelector('#questionContainer');
@@ -13,6 +14,8 @@ var optionA = document.querySelector('#optionA');
 var optionB = document.querySelector('#optionB');
 var optionC = document.querySelector('#optionC');
 var optionD = document.querySelector('#optionD');
+var nameInput;
+var saveButton;
 
 var isGameOver = false;
 var timer;
@@ -20,8 +23,8 @@ var timerCount;
 var highScoresArray = [];
 var questionIndex = 0;
 var answerClick;
-var finalAnswer;
 var clickedClass;
+var isNextReady = false;
 
 // Array with quiz questions
 var questionsArray = [
@@ -86,32 +89,28 @@ function init() {
 // The startGame function is called when the start button is clicked
 function startGame() {
     isGameOver = false;
-    timerCount = 50;
+    timerCount = 75;
     startButton.className = 'hidden';
     quizTitle.className = 'hidden';
     gameDescription.className = 'hidden';
     startTimer();
-    //for (var i = 0; i < questionsArray.length; i++){
-    //if(questionIndex < questionsArray.length){
-        renderQuestion(questionsArray);
-        //checkAnswer();
-        clearClicked();
-        //checkAnswer();
-        //registerClick(answerClick);
-        //saveAnswer(answerClick);
-        //checkAnswer(answerClick);
-    //}
+    renderQuestion(questionsArray);
+}
+
+function continueGame() {
+    setTimeout(renderQuestion(questionsArray), 2000);
 }
 
 // The renderQuestion function displays the question on the screen
 function renderQuestion(array) {
     if(questionIndex >= questionsArray.length){
         isGameOver = true;
+        showScore();
     }
     question.classList.add('alignLeft');
     answerList.classList.add('answerList');
     answerList.classList.remove('hidden');
-    clearClicked();
+    //clearClicked();
     optionA.classList.add('displayOptions');
     optionB.classList.add('displayOptions');
     optionC.classList.add('displayOptions');
@@ -125,23 +124,29 @@ function renderQuestion(array) {
 
 function showScore() {
     result.innerHTML = '';
+    question.classList.remove('alignLeft');
     question.innerHTML = 'Your score is ' + timerCount;
     optionContainer.innerHTML = '<br><br><label>Name:</label><input><button>Save<button>';
+    nameInput = document.querySelector('input');
+    saveButton = document.querySelector('button');
+    highScoresArray.push(nameInput.textContent, timerCount);
+    console.log(highScoresArray);
+}
+
+function saveHighScore() {
+    localStorage.setItem("highScores", highScoresArray);
 }
 
 function checkAnswer() {
     if (answerClick === questionsArray[questionIndex].answer) {
         result.textContent = 'CORRECT!!!';
         questionIndex++;
-        //setTimeout(clearClicked(), 2000);
-        renderQuestion(questionsArray);
     } else {
         timerCount -= 10;
         result.textContent = 'WRONG...';
         questionIndex++;
-        //setTimeout(clearClicked(), 2000);
-        renderQuestion(questionsArray);
     }
+    isNextReady = true;
 }
 
 function clearClicked() {
@@ -161,32 +166,24 @@ function clearClicked() {
 }
 
 // The changeBackground function highlights the chosen option
-function changeBackgroundA(event) {
-    event.preventDefault();
+function changeBackgroundA() {
     optionA.classList.add('clicked');
     answerClick = 'a';
-    checkAnswer();
 }
 
-function changeBackgroundB(event) {
-    event.preventDefault();
+function changeBackgroundB() {
     optionB.classList.add('clicked');
     answerClick = 'b';
-    checkAnswer();
 }
 
-function changeBackgroundC(event) {
-    event.preventDefault();
+function changeBackgroundC() {
     optionC.classList.add('clicked');
     answerClick = 'c';
-    checkAnswer();
 }
 
-function changeBackgroundD(event) {
-    event.preventDefault();
+function changeBackgroundD() {
     optionD.classList.add('clicked');
     answerClick = 'd';
-    checkAnswer();
 }
 
 // The startTimer function starts the timer for the game
@@ -194,10 +191,10 @@ function startTimer() {
     timer = setInterval(function() {
         timerCount--;
         timerTime.textContent = timerCount;
-        if (timerCount > 0) {
+        if (timerCount >= 0) {
             if (isGameOver) {
-                showScore();
                 clearInterval(timer);
+                showScore();
             }
         }
 
@@ -209,6 +206,15 @@ function startTimer() {
     }, 1000);
 }
 
+// The display high scores function displays the high scores
+function displayHighScores() {
+    startButton.classList.add('hidden');
+    question.classList.add('hidden');
+    result.classList.add('hidden');
+    quizTitle.classList.remove('hidden');
+    quizTitle.innerHTML = 'High Scores';
+    optionContainer.innerHTML = '<div></div>';
+}
 // The getHighScores function gets the stored data from local storage
 function getHighScores() {
     // Get stored values for high scores
@@ -225,6 +231,12 @@ function getHighScores() {
     //answerList.textContent('<li>' + highScoresArray[0] + '</li>');
 }
 
+function checkEnd() {
+    if(questionIndex >= questionsArray.length) {
+        isGameOver = true;
+    }
+}
+
 // Call init() to have high scores ready
 init();
 
@@ -232,7 +244,87 @@ init();
 startButton.addEventListener('click', startGame);
 
 // Event listeners for multiple choice
-optionA.addEventListener('click', changeBackgroundA);
-optionB.addEventListener('click', changeBackgroundB);
-optionC.addEventListener('click', changeBackgroundC);
-optionD.addEventListener('click', changeBackgroundD);
+optionA.addEventListener('mousedown', function(event) {
+    event.preventDefault();
+    if (timerCount === 0) {
+        return;
+    }
+    changeBackgroundA();
+    checkAnswer();
+    checkEnd();
+});
+
+optionB.addEventListener('mousedown', function(event) {
+    event.preventDefault();
+    if (timerCount === 0) {
+        return;
+    }
+    changeBackgroundB();
+    checkAnswer();
+    checkEnd();
+});
+
+optionC.addEventListener('mousedown', function(event) {
+    event.preventDefault();
+    if (timerCount === 0) {
+        return;
+    }
+    changeBackgroundC();
+    checkAnswer();
+    checkEnd();
+});
+
+optionD.addEventListener('mousedown', function(event) {
+    event.preventDefault();
+    if (timerCount === 0) {
+        return;
+    }
+    changeBackgroundD();
+    checkAnswer();
+    checkEnd();
+});
+
+// Event listener for rendering next screen
+optionA.addEventListener('mouseup', function(event) {
+    event.preventDefault();
+    if (timerCount === 0) {
+        return;
+    }
+    optionA.classList.remove('clicked');
+    result.textContent = '';
+    renderQuestion(questionsArray);
+});
+
+optionB.addEventListener('mouseup', function(event) {
+    event.preventDefault();
+    if (timerCount === 0) {
+        return;
+    }
+    optionB.classList.remove('clicked');
+    result.textContent = '';
+    renderQuestion(questionsArray);
+});
+
+optionC.addEventListener('mouseup', function(event) {
+    event.preventDefault();
+    if (timerCount === 0) {
+        return;
+    }
+    optionC.classList.remove('clicked');
+    result.textContent = '';
+    renderQuestion(questionsArray);
+});
+
+optionD.addEventListener('mouseup', function(event) {
+    event.preventDefault();
+    if (timerCount === 0) {
+        return;
+    }
+    optionD.classList.remove('clicked');
+    result.textContent = '';
+    renderQuestion(questionsArray);
+});
+
+//saveButton.addEventListener('click', saveHighScore);
+// Event listener for high scores button
+highScores.addEventListener('click', displayHighScores);
