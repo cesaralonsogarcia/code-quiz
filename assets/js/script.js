@@ -14,17 +14,24 @@ var optionA = document.querySelector('#optionA');
 var optionB = document.querySelector('#optionB');
 var optionC = document.querySelector('#optionC');
 var optionD = document.querySelector('#optionD');
-var nameInput;
-var saveButton;
+var nameInput = document.querySelector('#nameInput');
+var saveButton = document.querySelector('#saveButton');
+var startButton = document.querySelector('#startButton');
+var backButton = document.querySelector('#backButton');
+var clearButton = document.querySelector('#clearButton');
+var playAgainButton = document.querySelector('#playAgainButton');
 
+// All other variables
 var isGameOver = false;
 var timer;
 var timerCount;
 var highScoresArray = [];
+var highScoresString;
 var questionIndex = 0;
 var answerClick;
 var clickedClass;
-var isNextReady = false;
+var newHighScore;
+var highScoreTable;
 
 // Array with quiz questions
 var questionsArray = [
@@ -83,6 +90,11 @@ var questionsArray = [
 // The init function will load the high scores when the page loads
 function init() {
     answerList.classList.add('hidden');
+    nameInput.classList.add('hidden');
+    saveButton.classList.add('hidden');
+    playAgainButton.classList.add('hidden');
+    backButton.classList.add('hidden');
+    clearButton.classList.add('hidden');
     getHighScores();
 }
 
@@ -97,20 +109,15 @@ function startGame() {
     renderQuestion(questionsArray);
 }
 
-function continueGame() {
-    setTimeout(renderQuestion(questionsArray), 2000);
-}
-
 // The renderQuestion function displays the question on the screen
 function renderQuestion(array) {
-    if(questionIndex >= questionsArray.length){
+    if(questionIndex === questionsArray.length){
         isGameOver = true;
         showScore();
     }
     question.classList.add('alignLeft');
     answerList.classList.add('answerList');
     answerList.classList.remove('hidden');
-    //clearClicked();
     optionA.classList.add('displayOptions');
     optionB.classList.add('displayOptions');
     optionC.classList.add('displayOptions');
@@ -122,21 +129,17 @@ function renderQuestion(array) {
     optionD.textContent = array[questionIndex].options.d;
 }
 
+// This function displays the final score
 function showScore() {
+    answerList.classList.add('hidden');
+    nameInput.classList.remove('hidden');
+    saveButton.classList.remove('hidden');
     result.innerHTML = '';
     question.classList.remove('alignLeft');
     question.innerHTML = 'Your score is ' + timerCount;
-    optionContainer.innerHTML = '<br><br><label>Name:</label><input><button>Save<button>';
-    nameInput = document.querySelector('input');
-    saveButton = document.querySelector('button');
-    highScoresArray.push(nameInput.textContent, timerCount);
-    console.log(highScoresArray);
 }
 
-function saveHighScore() {
-    localStorage.setItem("highScores", highScoresArray);
-}
-
+// This function shows if the answer is correct or wrong
 function checkAnswer() {
     if (answerClick === questionsArray[questionIndex].answer) {
         result.textContent = 'CORRECT!!!';
@@ -149,6 +152,7 @@ function checkAnswer() {
     isNextReady = true;
 }
 
+// This function removes the styling for the selected option
 function clearClicked() {
     if(answerClick === 'a'){
         optionA.classList.remove('clicked');
@@ -206,29 +210,45 @@ function startTimer() {
     }, 1000);
 }
 
-// The display high scores function displays the high scores
+// This function displays the high scores
 function displayHighScores() {
     startButton.classList.add('hidden');
     question.classList.add('hidden');
     result.classList.add('hidden');
+    nameInput.classList.add('hidden');
+    saveButton.classList.add('hidden');
+    playAgainButton.classList.add('hidden');
+    answerList.classList.add('hidden');
     quizTitle.classList.remove('hidden');
     quizTitle.innerHTML = 'High Scores';
-    optionContainer.innerHTML = '<div></div>';
+    backButton.classList.remove('hidden');
+    clearButton.classList.remove('hidden');
+    for(var i = 0; i < highScoresArray.length; i++){
+        highScoreTable += highScoresArray[i] + '<br>';
+    }
+    console.log(highScoreTable);
 }
+
 // The getHighScores function gets the stored data from local storage
 function getHighScores() {
-    // Get stored values for high scores
-    var highScoresString = localStorage.getItem("highScores");
-    // Convert it into an array
-    var highScores = JSON.parse(highScoresString);
-    // Check if the storage is empty
+    highScoresString = localStorage.getItem("highScores");
+    highScoresArray = JSON.parse(highScoresString);
     if (highScores === null) {
         highScoresArray = ['', ''];
     } else {
         highScoresArray = highScores;
     }
-    // Render array to page
-    //answerList.textContent('<li>' + highScoresArray[0] + '</li>');
+}
+
+// This function saves the high score to the local storage
+function saveHighScore() {
+    newHighScore = nameInput.value + " - " + timerCount;
+    //highScoresArray.push(newHighScore);
+    //highScoresArray = newHighScore + " - " + timerCount;
+    console.log(highScoresArray);
+    highScoresString = JSON.stringify(highScoresArray);
+    console.log(highScoresString);
+    localStorage.setItem("highScores", highScoresString);
 }
 
 function checkEnd() {
@@ -325,6 +345,21 @@ optionD.addEventListener('mouseup', function(event) {
     renderQuestion(questionsArray);
 });
 
-//saveButton.addEventListener('click', saveHighScore);
+// Event listener for save button
+saveButton.addEventListener('click', saveHighScore);
+
 // Event listener for high scores button
 highScores.addEventListener('click', displayHighScores);
+
+// Event listener for back button
+backButton.addEventListener('click', function() {
+    location.reload();
+});
+
+// Event listener for play again button
+playAgainButton.addEventListener('click', function() {
+    location.reload();
+});
+
+// Event listener for clear button
+//clearButton.addEventListener('click', clearHighScores);
