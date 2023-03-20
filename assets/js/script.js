@@ -101,7 +101,7 @@ function init() {
 // The startGame function is called when the start button is clicked
 function startGame() {
     isGameOver = false;
-    timerCount = 5;
+    timerCount = 75;
     startButton.className = 'hidden';
     quizTitle.className = 'hidden';
     gameDescription.className = 'hidden';
@@ -182,7 +182,7 @@ function startTimer() {
                 clearInterval(timer);
                 showScore();
             }
-        } else { //(timerCount <= 0) {
+        } else {
             clearInterval(timer);
             timerCount = 0;
             timerTime.textContent = timerCount;
@@ -219,7 +219,6 @@ function displayHighScores() {
 
 // The getHighScores function gets the stored data from local storage
 function getHighScores() {
-    console.log(highScoresString);
     highScoresString = localStorage.getItem('highScores');
     if (highScoresString !== '') {
         highScoresArray = JSON.parse(highScoresString);
