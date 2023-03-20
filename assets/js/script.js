@@ -26,12 +26,12 @@ var isGameOver = false;
 var timer;
 var timerCount;
 var highScoresArray = [];
-var highScoresString;
+var highScoresString = '';
 var questionIndex = 0;
 var answerClick;
 var clickedClass;
 var newHighScore;
-var highScoreTable;
+var highScoreTable = [];
 
 // Array with quiz questions
 var questionsArray = [
@@ -101,7 +101,7 @@ function init() {
 // The startGame function is called when the start button is clicked
 function startGame() {
     isGameOver = false;
-    timerCount = 75;
+    timerCount = 5;
     startButton.className = 'hidden';
     quizTitle.className = 'hidden';
     gameDescription.className = 'hidden';
@@ -111,10 +111,10 @@ function startGame() {
 
 // The renderQuestion function displays the question on the screen
 function renderQuestion(array) {
-    if(questionIndex === questionsArray.length){
+    if(questionIndex >= questionsArray.length) {
         isGameOver = true;
         showScore();
-    }
+    } else {
     question.classList.add('alignLeft');
     answerList.classList.add('answerList');
     answerList.classList.remove('hidden');
@@ -127,6 +127,7 @@ function renderQuestion(array) {
     optionB.textContent = array[questionIndex].options.b;
     optionC.textContent = array[questionIndex].options.c;
     optionD.textContent = array[questionIndex].options.d;
+    }
 }
 
 // This function displays the final score
@@ -137,36 +138,17 @@ function showScore() {
     result.innerHTML = '';
     question.classList.remove('alignLeft');
     question.innerHTML = 'Your score is ' + timerCount;
+    playAgainButton.classList.remove('hidden');
 }
 
 // This function shows if the answer is correct or wrong
 function checkAnswer() {
     if (answerClick === questionsArray[questionIndex].answer) {
         result.textContent = 'CORRECT!!!';
-        questionIndex++;
     } else {
         timerCount -= 10;
         result.textContent = 'WRONG...';
-        questionIndex++;
     }
-    isNextReady = true;
-}
-
-// This function removes the styling for the selected option
-function clearClicked() {
-    if(answerClick === 'a'){
-        optionA.classList.remove('clicked');
-    } else if(answerClick === 'b'){
-        optionB.classList.remove('clicked');
-    } else if(answerClick === 'c'){
-        optionC.classList.remove('clicked');
-    } else if(answerClick === 'd'){
-        optionD.classList.remove('clicked');
-    }
-    console.log(optionA);
-    console.log(optionB);
-    console.log(optionC);
-    console.log(optionD);
 }
 
 // The changeBackground function highlights the chosen option
@@ -200,11 +182,10 @@ function startTimer() {
                 clearInterval(timer);
                 showScore();
             }
-        }
-
-        if (timerCount <= 0) {
+        } else { //(timerCount <= 0) {
             clearInterval(timer);
             timerCount = 0;
+            timerTime.textContent = timerCount;
             showScore();
         }
     }, 1000);
@@ -212,6 +193,7 @@ function startTimer() {
 
 // This function displays the high scores
 function displayHighScores() {
+    getHighScores();
     startButton.classList.add('hidden');
     question.classList.add('hidden');
     result.classList.add('hidden');
@@ -223,38 +205,38 @@ function displayHighScores() {
     quizTitle.innerHTML = 'High Scores';
     backButton.classList.remove('hidden');
     clearButton.classList.remove('hidden');
-    for(var i = 0; i < highScoresArray.length; i++){
-        highScoreTable += highScoresArray[i] + '<br>';
+    gameDescription.classList.remove('hidden');
+    if (highScoresString === ''){
+        gameDescription.innerHTML = 'None saved';
+    } else {
+        for(var i = 0; i < highScoresArray.length; i++) {
+            highScoreTable += highScoresArray[i] + "<br>";
+        }
+    gameDescription.innerHTML = highScoreTable;
     }
     console.log(highScoreTable);
 }
 
 // The getHighScores function gets the stored data from local storage
 function getHighScores() {
-    highScoresString = localStorage.getItem("highScores");
-    highScoresArray = JSON.parse(highScoresString);
-    if (highScores === null) {
-        highScoresArray = ['', ''];
-    } else {
-        highScoresArray = highScores;
+    console.log(highScoresString);
+    highScoresString = localStorage.getItem('highScores');
+    if (highScoresString !== '') {
+        highScoresArray = JSON.parse(highScoresString);
     }
 }
 
 // This function saves the high score to the local storage
 function saveHighScore() {
     newHighScore = nameInput.value + " - " + timerCount;
-    //highScoresArray.push(newHighScore);
-    //highScoresArray = newHighScore + " - " + timerCount;
-    console.log(highScoresArray);
-    highScoresString = JSON.stringify(highScoresArray);
-    console.log(highScoresString);
-    localStorage.setItem("highScores", highScoresString);
+    highScoresArray.push(newHighScore);
+    localStorage.setItem('highScores', JSON.stringify(highScoresArray));
 }
 
-function checkEnd() {
-    if(questionIndex >= questionsArray.length) {
-        isGameOver = true;
-    }
+// This function clears the high scores
+function clearHighScores() {
+    localStorage.setItem('highScores', '');
+    displayHighScores();
 }
 
 // Call init() to have high scores ready
@@ -266,82 +248,58 @@ startButton.addEventListener('click', startGame);
 // Event listeners for multiple choice
 optionA.addEventListener('mousedown', function(event) {
     event.preventDefault();
-    if (timerCount === 0) {
-        return;
-    }
     changeBackgroundA();
     checkAnswer();
-    checkEnd();
 });
 
 optionB.addEventListener('mousedown', function(event) {
     event.preventDefault();
-    if (timerCount === 0) {
-        return;
-    }
     changeBackgroundB();
     checkAnswer();
-    checkEnd();
 });
 
 optionC.addEventListener('mousedown', function(event) {
     event.preventDefault();
-    if (timerCount === 0) {
-        return;
-    }
     changeBackgroundC();
     checkAnswer();
-    checkEnd();
 });
 
 optionD.addEventListener('mousedown', function(event) {
     event.preventDefault();
-    if (timerCount === 0) {
-        return;
-    }
     changeBackgroundD();
     checkAnswer();
-    checkEnd();
 });
 
 // Event listener for rendering next screen
 optionA.addEventListener('mouseup', function(event) {
     event.preventDefault();
-    if (timerCount === 0) {
-        return;
-    }
     optionA.classList.remove('clicked');
     result.textContent = '';
+    questionIndex++;
     renderQuestion(questionsArray);
 });
 
 optionB.addEventListener('mouseup', function(event) {
     event.preventDefault();
-    if (timerCount === 0) {
-        return;
-    }
     optionB.classList.remove('clicked');
     result.textContent = '';
+    questionIndex++;
     renderQuestion(questionsArray);
 });
 
 optionC.addEventListener('mouseup', function(event) {
     event.preventDefault();
-    if (timerCount === 0) {
-        return;
-    }
     optionC.classList.remove('clicked');
     result.textContent = '';
+    questionIndex++;
     renderQuestion(questionsArray);
 });
 
 optionD.addEventListener('mouseup', function(event) {
     event.preventDefault();
-    if (timerCount === 0) {
-        return;
-    }
     optionD.classList.remove('clicked');
     result.textContent = '';
+    questionIndex++;
     renderQuestion(questionsArray);
 });
 
@@ -362,4 +320,4 @@ playAgainButton.addEventListener('click', function() {
 });
 
 // Event listener for clear button
-//clearButton.addEventListener('click', clearHighScores);
+clearButton.addEventListener('click', clearHighScores);
